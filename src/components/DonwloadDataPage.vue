@@ -20,6 +20,8 @@
 
 <script>
 import axios from 'axios';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 
 export default {
   data() {
@@ -60,13 +62,30 @@ export default {
           responseType: 'blob'
         });
 
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', `${this.deviceIdValue}_data_${range}_months.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const fileName = `${this.deviceIdValue}_data_${range}_months.csv`;
+        
+        // Convert Blob to Base64 (for Capacitor filesystem)
+        const reader = new FileReader();
+        reader.readAsDataURL(new Blob([response.data]));
+        reader.onloadend = async () => {
+          const base64Data = reader.result.split(',')[1];
+
+          // Save file to the device using Capacitor FileSystem
+          await Filesystem.writeFile({
+            path: fileName,
+            data: base64Data,
+            directory: Directory.Documents,
+            encoding: 'base64',
+          });
+
+          // Share file using Capacitor Share plugin
+          await Share.share({
+            title: 'CSV Data File',
+            text: 'Here is the downloaded data',
+            url: `file://${Directory.Documents}/${fileName}`,
+            dialogTitle: 'Share the file',
+          });
+        };
       } catch (error) {
         console.error('Error downloading data:', error);
       } finally {
