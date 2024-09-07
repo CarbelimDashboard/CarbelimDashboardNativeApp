@@ -36,6 +36,7 @@ import Swal from 'sweetalert2';
 import DeviceView from './DeviceView.vue';
 import Cards from '../components/CardCarousel.vue';
 import HealthCard from '../components/HealthCard.vue';
+import { Preferences } from '@capacitor/preferences';
 
 export default {
     components: {
@@ -137,7 +138,7 @@ export default {
         updateSetView() {
             this.setView = !this.setView;
         },
-    async toCheckDeviceId() {
+        async toCheckDeviceId() {
             Swal.fire({
                 title: 'Adding Device',
                 text: 'Please wait...',
@@ -152,17 +153,18 @@ export default {
             try {
                 const response = await axios.post(`${process.env.VUE_APP_BACKEND_URL}/dashboardverify`, { data: this.deviceid }, { withCredentials: true });
                 if (response.data.success) {
-                    const cookieValue = JSON.stringify({
+                    const deviceData = {
                         deviceIsValid: response.data.deviceIsValid,
                         deviceId: response.data.deviceId
+                    };
+
+                    // Store data using Capacitor Preferences
+                    await Preferences.set({
+                        key: 'deviceData',
+                        value: JSON.stringify(deviceData)
                     });
-                    Cookies.set('devicevalid', cookieValue, { 
-                        path: '/',
-                        secure: true,
-                        sameSite: 'None',
-                        expires: 90 // 90 days
-                    });
-                    console.log('Cookie set:', cookieValue); // Console log the cookie value
+
+                    console.log('Device data stored:', deviceData); // Console log the stored value
                     this.$store.commit('SET_DEVICE_VALIDITY', response.data.deviceIsValid);
                     this.$store.commit('SET_DEVICE_ID', response.data.deviceId);
                     Swal.fire('Success', 'Device added successfully', 'success');
@@ -233,7 +235,16 @@ export default {
             return this.$store.getters.toGetDeviceId;
         }
     },
-    mounted() {
+    async mounted() {
+        // Retrieve device data from Capacitor Preferences
+        const { value } = await Preferences.get({ key: 'deviceData' });
+        if (value) {
+            const deviceData = JSON.parse(value);
+            this.$store.commit('SET_DEVICE_VALIDITY', deviceData.deviceIsValid);
+            this.$store.commit('SET_DEVICE_ID', deviceData.deviceId);
+        }
+
+        // Start the interval to check device validity
         this.intervalId = setInterval(this.checkDeviceValidity, 5000); // Check every 5 seconds
     },
     beforeUnmount() {
