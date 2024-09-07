@@ -14,10 +14,7 @@
     "@capacitor/filesystem": "^6.0.1",
     "@capacitor/ios": "^6.1.1",
     "@capacitor/preferences": "^6.0.2",
-<<<<<<< HEAD
     "@capacitor/share": "^6.0.2",
-=======
->>>>>>> 17b7f30a22963e30e0ac7cbc7f60ae91368800a0
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/vue-fontawesome": "^3.0.8",
