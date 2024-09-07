@@ -9,9 +9,13 @@ android {
 
 apply from: "../capacitor-cordova-android-plugins/cordova.variables.gradle"
 dependencies {
+<<<<<<< HEAD
     implementation project(':capacitor-filesystem')
     implementation project(':capacitor-preferences')
     implementation project(':capacitor-share')
+=======
+    implementation project(':capacitor-preferences')
+>>>>>>> 17b7f30a22963e30e0ac7cbc7f60ae91368800a0
 
 }
 
