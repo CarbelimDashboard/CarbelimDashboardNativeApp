@@ -15,30 +15,35 @@
 </template>
 
 <script>
+import { Preferences } from '@capacitor/preferences';
+
 export default {
   data() {
     return {
-      confirmRemove: false
+      confirmRemove: false,
     };
   },
   methods: {
-    removeDevice() {
-      // Commit mutations to Vuex store
-      this.$store.commit('SET_DEVICE_VALIDITY', false);
-      this.$store.commit('SET_DEVICE_ID', '');
+    async removeDevice() {
+      try {
+        // Remove device data from Capacitor Preferences
+        await Preferences.remove({ key: 'deviceData' });
 
-      // Remove the devicevalid cookie
-      document.cookie = "devicevalid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        // Commit mutations to Vuex store
+        this.$store.commit('SET_DEVICE_VALIDITY', false);
+        this.$store.commit('SET_DEVICE_ID', '');
 
-      // Redirect to the home page
-      this.$router.push('/home');
+        // Redirect to the home page
+        this.$router.push('/home');
+      } catch (error) {
+        console.error('Error removing device data:', error);
+      }
     }
   }
 };
 </script>
 
 <style scoped>
-
 .card {
   margin: 10px;
   padding: 20px;
@@ -79,24 +84,13 @@ button:focus {
 }
 
 @media (max-width: 600px) {
-  .button-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .card {
+    padding: 10px;
   }
-  
+
   button {
-    width: auto;
-    padding: 15px;
+    font-size: 14px;
+    padding: 8px 16px;
   }
-}
-
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.5s, transform 0.5s;
-}
-
-.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
-  opacity: 0;
-  transform: scale(0.9);
 }
 </style>

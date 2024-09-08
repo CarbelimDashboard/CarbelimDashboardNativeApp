@@ -255,7 +255,6 @@ export default {
 }
 </script>
 
-
 <style scoped>
 .btncontainer{
     margin-top: 10px;
