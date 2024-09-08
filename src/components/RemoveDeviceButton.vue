@@ -25,19 +25,15 @@ export default {
   },
   methods: {
     async removeDevice() {
-      try {
-        // Remove device data from Capacitor Preferences
-        await Preferences.remove({ key: 'deviceData' });
+      // Commit mutations to Vuex store
+      this.$store.commit('SET_DEVICE_VALIDITY', false);
+      this.$store.commit('SET_DEVICE_ID', '');
 
-        // Commit mutations to Vuex store
-        this.$store.commit('SET_DEVICE_VALIDITY', false);
-        this.$store.commit('SET_DEVICE_ID', '');
+      // Remove the devicevalid from Preferences
+      await Preferences.remove({ key: 'devicevalid' });
 
-        // Redirect to the home page
-        this.$router.push('/home');
-      } catch (error) {
-        console.error('Error removing device data:', error);
-      }
+      // Redirect to the home page
+      this.$router.push('/home');
     }
   }
 };
