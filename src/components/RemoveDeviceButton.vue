@@ -30,7 +30,7 @@ export default {
       this.$store.commit('SET_DEVICE_ID', '');
 
       // Remove the devicevalid from Preferences
-      await Preferences.remove({ key: 'devicevalid' });
+      await Preferences.remove({ key: 'deviceData' });
 
       // Redirect to the home page
       this.$router.push('/home');

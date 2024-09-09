@@ -31,7 +31,6 @@
 
 <script>
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import Swal from 'sweetalert2';
 import DeviceView from './DeviceView.vue';
 import Cards from '../components/CardCarousel.vue';
